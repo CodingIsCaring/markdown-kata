@@ -19,7 +19,7 @@ The syntax of a footnote is the following:
 ```markdown
 visible text link [^anchor1]
 
-[^anchor1]: url or text
+[^anchor1]: url
 ```
 
 The goal is to make conversions like the following:
@@ -29,14 +29,15 @@ The goal is to make conversions like the following:
 ### Original:
 
 ```markdown
-[this book](<https://codigosostenible.com>) and some other text and some other text line.
+[this book](https://codigosostenible.com) and some other text and some [other](https://www.twitch.tv/codingiscaring) text line.
 ```
 
 ### Result:
 ```markdown
-this book [^anchor1] and some other text and some other text line.
+this book [^anchor1] and some other text and some other [^anchor2] text line.
 
-[^anchor1]: <https://codigosostenible.com>
+[^anchor1]: https://codigosostenible.com
+[^anchor2]: https://www.twitch.tv/codingiscaring
 ```
 
 There are multiple edge cases to consider: multiple links per line, several links sharing the same url...
