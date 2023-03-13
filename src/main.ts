@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 const regExpLink = /\[(.*?)\]\((.*?)\)/g;
-export const linkToFootnote = (originalFile: string, transformedFile: string) => {
+export const linksToFootnotes = (originalFile: string, transformedFile: string) => {
   if (!fs.existsSync(originalFile)) {
     throw new Error(`The file ${originalFile} does not exist`);
   }

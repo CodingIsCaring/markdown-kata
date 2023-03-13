@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { linkToFootnote } from '../main';
+import { linksToFootnotes } from '../main';
 
 const originalFile = 'originalFile.md';
 const transformedFile = 'transformedFile.md';
@@ -14,7 +14,7 @@ describe('linkToFootnote', () => {
   it('should transform the links into footnotes', () => {
     fs.writeFileSync(originalFile, '[this book](https://codigosostenible.com) and some other text and some [other](https://www.twitch.tv/codingiscaring) text line.');
 
-    linkToFootnote(originalFile, transformedFile);
+    linksToFootnotes(originalFile, transformedFile);
 
     const actualText = fs.readFileSync(transformedFile).toString();
     const expectedText = 'this book [^anchor1] and some other text and some other [^anchor2] text line.\n' +
@@ -28,14 +28,14 @@ describe('linkToFootnote', () => {
   it('should display an error if the original file does not exist', () => {
     const nonExistentFile = 'nonexistentFile.md';
 
-    expect(() => linkToFootnote(nonExistentFile, transformedFile))
+    expect(() => linksToFootnotes(nonExistentFile, transformedFile))
       .toThrowError(`The file ${nonExistentFile} does not exist`);
   });
 
   it('should create the transformed file if it does not exist', () => {
     fs.writeFileSync(originalFile, '[visible text link](url)');
 
-    linkToFootnote(originalFile, transformedFile);
+    linksToFootnotes(originalFile, transformedFile);
 
     expect(fs.existsSync(transformedFile)).toBe(true);
     resetFiles();
@@ -44,14 +44,14 @@ describe('linkToFootnote', () => {
   it('should display an error if the original file is empty', () => {
     fs.writeFileSync(originalFile, '');
 
-    expect(() => linkToFootnote(originalFile, transformedFile))
+    expect(() => linksToFootnotes(originalFile, transformedFile))
       .toThrowError(`The file ${originalFile} is empty`);
   });
 
   it('should write the original content if it does not contain any links', () => {
     fs.writeFileSync(originalFile, 'text without links');
 
-    linkToFootnote(originalFile, transformedFile);
+    linksToFootnotes(originalFile, transformedFile);
 
     const actualText = fs.readFileSync(transformedFile).toString();
     expect(actualText).toBe('text without links');
