@@ -17,9 +17,9 @@ The syntax of a footnote is the following:
 **Result data:** 
 
 ```markdown
-visible text link [^anchor1]
+visible text link [^1]
 
-[^anchor1]: url
+[^1]: url
 ```
 
 The goal is to make conversions like the following:
@@ -34,10 +34,11 @@ The goal is to make conversions like the following:
 
 ### Result:
 ```markdown
-this book [^anchor1] and some other text and some other [^anchor2] text line.
 
-[^anchor1]: https://codigosostenible.com
-[^anchor2]: https://www.twitch.tv/codingiscaring
+this book [^1] and some other text and some other [^2] text line.
+
+[^1]: https://codigosostenible.com
+[^2]: https://www.twitch.tv/codingiscaring
 ```
 
 There are multiple edge cases to consider: multiple links per line, several links sharing the same url...
