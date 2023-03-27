@@ -71,19 +71,34 @@ describe('linkToFootnote', () => {
     resetFiles();
   });
 
+  // Hello this is the streaming of [codingIsCaring
+  // https://www.twitch.tv/codingiscaring) we are working with Pili
+
+
   it('should transform a file with just one link surrounded by text', () => {
     fs.writeFileSync(originalFile, 'Hello this is the streaming of [codingIsCaring](https://www.twitch.tv/codingiscaring) we are working with Pili');
 
     linksToFootnotes(originalFile, transformedFile);
 
     const actualText = fs.readFileSync(transformedFile).toString();
-    const expectedText = 'Hello this is the streaming of codingIsCaring [^1] we are working with Pili\n' +
+    const expectedText = 'Hello this is the streaming of codingIsCaring[^1] we are working with Pili\n' +
       '\n' +
       '[^1]: https://www.twitch.tv/codingiscaring';
 
     expect(actualText).toEqual(expectedText);
     resetFiles();
   });
+
+
+  //0- cosas delante [this streaming
+  //1- https://www.twitch.tv/codingiscaring)
+  //2- and some other text and some [other
+  //3- https://www.twitch.tv/codingiscaring) lastSentence
+
+  // result = cosas delante this streaming [^1] and some other text and some other [^2]
+
+  // links = [^1]: https://www.twitch.tv/codingiscaring
+  //          [^2]: https://www.twitch.tv/codingiscaring
 
   it('should add only one footnote if there is a link in the original file more than once', () => {
     fs.writeFileSync(originalFile, '[this streaming](https://www.twitch.tv/codingiscaring) and some other text and some [other](https://www.twitch.tv/codingiscaring)');

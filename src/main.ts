@@ -1,15 +1,31 @@
 import fs from 'fs';
 
-const regExpLink = /(.*)\[(.*)\]\((.*)\)/g;
+const transform = (contentSplit: string[]) => {
+  let result = '';
+  let links = '';
+  let index = 1;
 
-function loopToTransformLinks(allWithoutLastSentence: string, lastSentence: string) {
-  // TODO: create a loop to replace all the links in each iteration
-  // considering that the link is the same.
-  const textWithAnchor = '$1$2 [^1]';
-  const anchorWithLink = '[^1]: $3';
-  const transformedContent = allWithoutLastSentence.replace(regExpLink, textWithAnchor + lastSentence + '\n\n' + anchorWithLink);
-  return transformedContent;
-}
+  contentSplit.forEach(item => {
+    const anchorLink = `[^${index}]`;
+    if (item.includes('[')) {
+      result = result + item.replace('[', '') + anchorLink;
+    }
+
+    if (item.includes(')')) {
+      //TODO change itemSplit to a better name.
+      // ItemSplit[0] is the link and itemSplit[1] is the text after the link
+      const itemSplit = item.split(')');
+      links = links + '\n' + anchorLink + ': ' + itemSplit[0];
+      if (itemSplit[1]) {
+        result = result + itemSplit[1];
+      }
+      index++;
+    }
+  });
+
+  // TODO: 3 test fails
+  return result + '\n' + links;
+};
 
 export const linksToFootnotes = (originalFile: string, transformedFile: string) => {
   if (!fs.existsSync(originalFile)) {
@@ -21,18 +37,13 @@ export const linksToFootnotes = (originalFile: string, transformedFile: string) 
     throw new Error(`The file ${originalFile} is empty`);
   }
 
-  if (!regExpLink.test(originalContent)) {
+  const contentSplit = originalContent.split('](');
+  if (contentSplit.length === 1) {
     fs.writeFileSync(transformedFile, originalContent);
+    return;
   }
 
-  const lastIndex = originalContent.lastIndexOf(')');
-  const lastSentence = originalContent.slice(lastIndex + 1);
-  const allWithoutLastSentence = originalContent.slice(0, lastIndex + 1);
-
-  const transformedContent = loopToTransformLinks(allWithoutLastSentence, lastSentence);
-
-
-  if (!fs.existsSync(transformedFile)) {
-    fs.writeFileSync(transformedFile, transformedContent);
-  }
+  const transformedContent = transform(contentSplit);
+  console.log(47, transformedContent);
+  fs.writeFileSync(transformedFile, transformedContent);
 };
