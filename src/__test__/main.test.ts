@@ -12,12 +12,15 @@ const resetFiles = () => {
 describe('linkToFootnote', () => {
 
   it('should add multiple footnotes if there are multiple links in the original file', () => {
-    fs.writeFileSync(originalFile, '[this book](https://codigosostenible.com) and some other text and some [other](https://www.twitch.tv/codingiscaring) text line.');
+    fs.writeFileSync(originalFile, '[this book](https://codigosostenible.com) ' +
+      'and some other text and some [other](https://www.twitch.tv/codingiscaring) ' +
+      'text line.');
 
     linksToFootnotes(originalFile, transformedFile);
 
     const actualText = fs.readFileSync(transformedFile).toString();
-    const expectedText = 'this book [^1] and some other text and some other [^2] text line.\n' +
+    const expectedText = 'this book[^1] and some other text and some other[^2] ' +
+      'text line.\n' +
       '\n' +
       '[^1]: https://codigosostenible.com\n' +
       '[^2]: https://www.twitch.tv/codingiscaring';
@@ -64,19 +67,16 @@ describe('linkToFootnote', () => {
     linksToFootnotes(originalFile, transformedFile);
 
     const actualText = fs.readFileSync(transformedFile).toString();
-    const expectedText = 'Hello this is the streaming of codingIsCaring [^1]\n' +
+    const expectedText = 'Hello this is the streaming of codingIsCaring[^1]\n' +
       '\n' +
       '[^1]: https://www.twitch.tv/codingiscaring';
     expect(actualText).toEqual(expectedText);
     resetFiles();
   });
 
-  // Hello this is the streaming of [codingIsCaring
-  // https://www.twitch.tv/codingiscaring) we are working with Pili
-
-
   it('should transform a file with just one link surrounded by text', () => {
-    fs.writeFileSync(originalFile, 'Hello this is the streaming of [codingIsCaring](https://www.twitch.tv/codingiscaring) we are working with Pili');
+    fs.writeFileSync(originalFile, 'Hello this is the streaming of ' +
+      '[codingIsCaring](https://www.twitch.tv/codingiscaring) we are working with Pili');
 
     linksToFootnotes(originalFile, transformedFile);
 
@@ -89,24 +89,15 @@ describe('linkToFootnote', () => {
     resetFiles();
   });
 
-
-  //0- cosas delante [this streaming
-  //1- https://www.twitch.tv/codingiscaring)
-  //2- and some other text and some [other
-  //3- https://www.twitch.tv/codingiscaring) lastSentence
-
-  // result = cosas delante this streaming [^1] and some other text and some other [^2]
-
-  // links = [^1]: https://www.twitch.tv/codingiscaring
-  //          [^2]: https://www.twitch.tv/codingiscaring
-
   it('should add only one footnote if there is a link in the original file more than once', () => {
-    fs.writeFileSync(originalFile, '[this streaming](https://www.twitch.tv/codingiscaring) and some other text and some [other](https://www.twitch.tv/codingiscaring)');
+    fs.writeFileSync(originalFile, '[this streaming]' +
+      '(https://www.twitch.tv/codingiscaring) and some other text and ' +
+      'some [other](https://www.twitch.tv/codingiscaring)');
 
     linksToFootnotes(originalFile, transformedFile);
 
     const actualText = fs.readFileSync(transformedFile).toString();
-    const expectedText = 'this streaming [^1] and some other text and some other [^1]\n' +
+    const expectedText = 'this streaming[^1] and some other text and some other[^1]\n' +
       '\n' +
       '[^1]: https://www.twitch.tv/codingiscaring';
     expect(actualText).toEqual(expectedText);
